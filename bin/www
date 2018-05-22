@@ -1,0 +1,27 @@
+const path = require("path")
+
+if(!process.env.PORT) {
+  require("dotenv").config()
+}
+
+const server = require("../server");
+const port = process.env.PORT || 3000;
+const models = require("../models").sequelize;
+
+const onErr = err => {
+  console.log("An Error has occured at server startup",err);
+}
+
+const onListening = () => {
+  if(!process.env.PORT){
+    console.log(`Server is running on http://localhost:${port}`)
+  }
+}
+
+server.set("port",port)
+models.sync().then(() => {
+  server
+  .listen(port)
+  .on("error",onErr)
+  .on("listening",onListening);
+})
